@@ -1,0 +1,793 @@
+From d900ece82f27e7f08850338bbf8753b174424949 Mon Sep 17 00:00:00 2001
+From: SeanChuang2 <dinner0828@gmail.com>
+Date: Tue, 1 Jul 2025 09:53:07 +0800
+Subject: [PATCH] [ROM-2620][PTA_PTB_PTC] driver: Add pta ptb ptc related code
+ and definition
+Upstream-Status: Inappropriate
+
+---
+ .../boot/dts/freescale/imx8ulp-pinfunc.h      |  65 +++++
+ drivers/clk/imx/clk-imx8ulp.c                 | 213 +++++++++++++++++
+ drivers/clk/imx/clk-pllv4.c                   |  46 +++-
+ drivers/pinctrl/freescale/pinctrl-imx8ulp.c   | 222 +++++++++++++++++-
+ include/dt-bindings/clock/imx8ulp-clock.h     |  56 +++++
+ 5 files changed, 595 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h
+index b204ac79b449..f9b1333d8eec 100644
+--- a/arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h
++++ b/arch/arm64/boot/dts/freescale/imx8ulp-pinfunc.h
+@@ -10,6 +10,71 @@
+  * The pin function ID is a tuple of
+  * <mux_reg input_reg mux_mode input_val>
+  */
++
++/* IOMUXC0 8ULP_IO_Definition_and_Package_Ballmap_RM.xlsx attached in Reference Manual*/
++#define MX8ULP_PAD_PTC0__FLEXSPI0_A_DQS                              0x0100 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC0__PTC0_GPIOC                                  0x0100 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC1__FLEXSPI0_A_DATA7                            0x0104 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC1__PTC1_GPIOC                                  0x0104 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC2__FLEXSPI0_A_DATA6                            0x0108 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC2__PTC2_GPIOC                                  0x0108 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC3__FLEXSPI0_A_DATA5                            0x010c 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC3__PTC3_GPIOC                                  0x010c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC4__FLEXSPI0_A_DATA4                            0x0110 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC4__PTC4_GPIOC                                  0x0110 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC5__FLEXSPI0_A_SS0_B                            0x0114 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC5__PTC5_GPIOC                                  0x0114 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC6__FLEXSPI0_A_SCLK                             0x0118 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC6__PTC6_GPIOC                                  0x0118 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC7__FLEXSPI0_A_DATA3                            0x011c 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC7__PTC7_GPIOC                                  0x011c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC8__FLEXSPI0_A_DATA2                            0x0120 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC8__PTC8_GPIOC                                  0x0120 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC9__FLEXSPI0_A_DATA1                            0x0124 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC9__PTC9_GPIOC                                  0x0124 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC10__FLEXSPI0_A_DATA0                           0x0128 0x0000 0x8 0x0
++#define MX8ULP_PAD_PTC10__PTC10_GPIOC                                0x0128 0x0000 0x1 0x0
++
++#define MX8ULP_PAD_PTC11__PTC11_GPIOC                                0x012c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC12__PTC12_GPIOC                                0x0130 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC13__PTC13_GPIOC                                0x0134 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC14__PTC14_GPIOC                                0x0138 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC15__PTC15_GPIOC                                0x013c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC17__PTC17_GPIOC                                0x0144 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC18__PTC18_GPIOC                                0x0148 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC19__PTC19_GPIOC                                0x014c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC20__PTC20_GPIOC                                0x0150 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC21__PTC21_GPIOC                                0x0154 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC22__PTC22_GPIOC                                0x0158 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTC23__PTC23_GPIOC                                0x015c 0x0000 0x1 0x0
++
++#define MX8ULP_PAD_PTB0__PTB0_GPIOB                                  0x0080 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB1__PTB1_GPIOB                                  0x0084 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB2__PTB2_GPIOB                                  0x0088 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB3__PTB3_GPIOB                                  0x008c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB4__PTB4_GPIOB                                  0x0090 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB5__PTB5_GPIOB                                  0x0094 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB6__PTB6_GPIOB                                  0x0098 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB12__PTB12_GPIOB                                0x00b0 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTB13__PTB13_GPIOB                                0x00b4 0x0000 0x1 0x0
++
++#define MX8ULP_PAD_PTA5__PTA5_GPIOA                                  0x0014 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA6__PTA6_GPIOA                                  0x0018 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA8__PTA8_GPIOA                                  0x0020 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA9__PTA9_GPIOA                                  0x0024 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA10__PTA10_GPIOA                                0x0028 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA11__PTA11_GPIOA                                0x002c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA12__PTA12_GPIOA                                0x0030 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA15__PTA15_GPIOA                                0x003c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA16__PTA16_GPIOA                                0x0040 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA17__PTA17_GPIOA                                0x0044 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA19__PTA19_GPIOA                                0x004c 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA20__PTA20_GPIOA                                0x0050 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA21__PTA21_GPIOA                                0x0054 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA22__PTA22_GPIOA                                0x0058 0x0000 0x1 0x0
++#define MX8ULP_PAD_PTA23__PTA23_GPIOA                                0x005c 0x0000 0x1 0x0
++/* end of IOMUX0 */
++
+ #define MX8ULP_PAD_PTD0__PTD0                                        0x0000 0x0000 0x1 0x0
+ #define MX8ULP_PAD_PTD0__I2S6_RX_BCLK                                0x0000 0x0B44 0x7 0x1
+ #define MX8ULP_PAD_PTD0__SDHC0_RESET_B                               0x0000 0x0000 0x8 0x0
+diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
+index 535b6364ca7e..c74d89888541 100644
+--- a/drivers/clk/imx/clk-imx8ulp.c
++++ b/drivers/clk/imx/clk-imx8ulp.c
+@@ -17,6 +17,20 @@
+ static const char * const pll_pre_sels[] = { "sosc", "frosc", };
+ static const char * const a35_sels[] = { "frosc", "spll2", "sosc", "lvds", };
+ static const char * const nic_sels[] = { "frosc", "spll3_pfd0", "sosc", "lvds", };
++static const char * const dsp_sels[] = { "frosc", "pll0_pfd0", "pll0_pfd1", "sosc", "dummy", "dummy", "pll0", "dummy", };
++static const char * const cm33_sels[] = { "frosc", "pll0_pfd0", "pll1_pfd0", "sosc", "dummy", "dummy", "pll0", "dummy", };
++
++/* Add PCC0/PCC2 from RM Table 35. Clock sources mapped to different PCC0/1/2 clock selects PCS */
++static const char * const pcc0_periph_bus_sels[] = { "dummy", "lposc", "cgc0_sosc_div2",
++						     "cgc0_frosc_div2", "cm33_busclk", "pll1_pfd1_div",
++						     "pll0_pfd2_div", "pll0_pfd1_div", };
++static const char * const pcc0_periph_plat_sels[] = { "dummy", "dummy", "dummy",
++						     "cgc0_sosc_div1", "cgc0_frosc_div1", "cm33_plat",
++						     "frosc", "pll0_pfd3", };
++static const char * const pcc2_periph_bus_sels[] = { "dummy", "lposc", "cgc0_sosc_div3",
++						     "cgc0_frosc_div3", "cgc0_dsp_bus_clk", "pll1_vcodiv",
++						     "pll0_pfd2_div", "pll0_pfd1_div", };
++
+ static const char * const pcc3_periph_bus_sels[] = { "dummy", "lposc", "sosc_div2",
+ 						     "frosc_div2", "xbar_divbus", "spll3_pfd1_div1",
+ 						     "spll3_pfd0_div2", "spll3_pfd0_div1", };
+@@ -60,6 +74,15 @@ struct pcc_reset_dev {
+ #define PCC_SW_RST	BIT(28)
+ #define to_pcc_reset_dev(_rcdev)	container_of(_rcdev, struct pcc_reset_dev, rcdev)
+ 
++static const u32 pcc0_resets[] = {
++};
++
++static const u32 pcc1_resets[] = {
++};
++
++static const u32 pcc2_resets[] = {
++};
++
+ static const u32 pcc3_resets[] = {
+ 	0xa8, 0xac, 0xc8, 0xcc, 0xd0,
+ 	0xd4, 0xd8, 0xdc, 0xe0, 0xe4,
+@@ -142,6 +165,81 @@ static int imx8ulp_pcc_reset_init(struct platform_device *pdev, void __iomem *ba
+ 	return devm_reset_controller_register(dev, &pcc_reset->rcdev);
+ }
+ 
++static int imx8ulp_clk_cgc0_init(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, IMX8ULP_CLK_CGC0_END),
++			   GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = IMX8ULP_CLK_CGC0_END;
++	clks = clk_data->hws;
++
++	/* CGC0 */
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
++
++	clks[IMX8ULP_CLK_PLL1_PRE_SEL]	= imx_clk_hw_mux_flags("pll1_pre_sel", base + 0x610, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
++	clks[IMX8ULP_CLK_PLL0_PRE_SEL]	= imx_clk_hw_mux_flags("pll0_pre_sel", base + 0x510, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
++	clks[IMX8ULP_CLK_CGC0_DSP_SEL] = imx_clk_hw_mux_flags("cgc0_dsp_sel", base + 0x1c, 28, 3, dsp_sels, ARRAY_SIZE(dsp_sels), CLK_SET_PARENT_GATE);
++
++	clks[IMX8ULP_CLK_CM33_SEL] = imx_clk_hw_mux_flags("cm33_sel", base + 0x10, 28, 3, cm33_sels, ARRAY_SIZE(cm33_sels), CLK_SET_PARENT_GATE);
++
++	clks[IMX8ULP_CLK_PLL1] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "pll1", "pll1_pre_sel", base + 0x600);
++	clks[IMX8ULP_CLK_PLL0] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "pll0", "pll0_pre_sel", base + 0x500);
++
++	clks[IMX8ULP_CLK_PLL0_VCODIV] = imx_clk_hw_divider("pll0_vcodiv", "pll0", base + 0x504, 0, 6);
++	clks[IMX8ULP_CLK_PLL1_VCODIV] = imx_clk_hw_divider("pll1_vcodiv", "pll1", base + 0x604, 0, 6);
++
++	clks[IMX8ULP_CLK_PLL0_PFD0] = imx_clk_hw_pfdv2(IMX_PFDV2_IMX8ULP, "pll0_pfd0", "pll0_vcodiv", base + 0x514, 0);
++	clks[IMX8ULP_CLK_PLL0_PFD1] = imx_clk_hw_pfdv2(IMX_PFDV2_IMX8ULP, "pll0_pfd1", "pll0_vcodiv", base + 0x514, 1);
++	clks[IMX8ULP_CLK_PLL0_PFD2] = imx_clk_hw_pfdv2(IMX_PFDV2_IMX8ULP, "pll0_pfd2", "pll0_vcodiv", base + 0x514, 2);
++	clks[IMX8ULP_CLK_PLL0_PFD3] = imx_clk_hw_pfdv2(IMX_PFDV2_IMX8ULP, "pll0_pfd3", "pll0_vcodiv", base + 0x514, 3);
++
++	clks[IMX8ULP_CLK_PLL1_PFD1] = imx_clk_hw_pfdv2(IMX_PFDV2_IMX8ULP, "pll1_pfd1", "pll1_vcodiv", base + 0x614, 1);
++
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV1_GATE] = imx_clk_hw_gate_dis("cgc0_sosc_div1_gate", "sosc", base + 0x108, 7);
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV1] = imx_clk_hw_divider("cgc0_sosc_div1", "cgc0_sosc_div1_gate", base + 0x108, 0, 6);
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV2_GATE] = imx_clk_hw_gate_dis("cgc0_sosc_div2_gate", "sosc", base + 0x108, 15);
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV2] = imx_clk_hw_divider("cgc0_sosc_div2", "cgc0_sosc_div2_gate", base + 0x108, 8, 6);
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV3_GATE] = imx_clk_hw_gate_dis("cgc0_sosc_div3_gate", "sosc", base + 0x108, 23);
++	clks[IMX8ULP_CLK_CGC0_SOSC_DIV3] = imx_clk_hw_divider("cgc0_sosc_div3", "cgc0_sosc_div3_gate", base + 0x108, 16, 6);
++
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV1_GATE] = imx_clk_hw_gate_dis("cgc0_frosc_div1_gate", "frosc", base + 0x220, 7);
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV1] = imx_clk_hw_divider("cgc0_frosc_div1", "cgc0_frosc_div1_gate", base + 0x220, 0, 6);
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV2_GATE] = imx_clk_hw_gate_dis("cgc0_frosc_div2_gate", "frosc", base + 0x220, 15);
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV2] = imx_clk_hw_divider("cgc0_frosc_div2", "cgc0_frosc_div2_gate", base + 0x220, 8, 6);
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV3_GATE] = imx_clk_hw_gate_dis("cgc0_frosc_div3_gate", "frosc", base + 0x220, 23);
++	clks[IMX8ULP_CLK_CGC0_FROSC_DIV3] = imx_clk_hw_divider("cgc0_frosc_div3", "cgc0_frosc_div3_gate", base + 0x220, 16, 6);
++
++	clks[IMX8ULP_CLK_CGC0_DSP_CORE_DIV] = imx_clk_hw_divider("cgc0_dsp_core_div", "cgc0_dsp_sel", base + 0x1c, 21, 6);
++	clks[IMX8ULP_CLK_CGC0_DSP_BUS] = imx_clk_hw_divider("cgc0_dsp_bus_clk", "cgc0_dsp_core_div", base + 0x1c, 7, 6);
++
++	clks[IMX8ULP_CLK_PLL0_PFD1_DIV_GATE] = imx_clk_hw_gate_dis("pll0_pfd1_div_gate", "pll0_pfd1", base + 0x508, 7);
++	clks[IMX8ULP_CLK_PLL0_PFD1_DIV] = imx_clk_hw_divider("pll0_pfd1_div", "pll0_pfd1_div_gate", base + 0x508, 0, 6);
++
++	clks[IMX8ULP_CLK_PLL0_PFD2_DIV_GATE] = imx_clk_hw_gate_dis("pll0_pfd2_div_gate", "pll0_pfd2", base + 0x508, 15);
++	clks[IMX8ULP_CLK_PLL0_PFD2_DIV] = imx_clk_hw_divider("pll0_pfd2_div", "pll0_pfd2_div_gate", base + 0x508, 8, 6);
++
++	clks[IMX8ULP_CLK_PLL1_PFD1_DIV_GATE] = imx_clk_hw_gate_dis("pll1_pfd1_div_gate", "pll1_pfd1", base + 0x608, 7);
++	clks[IMX8ULP_CLK_PLL1_PFD1_DIV] = imx_clk_hw_divider("pll1_pfd1_div", "pll1_pfd1_div_gate", base + 0x608, 0, 6);
++
++	clks[IMX8ULP_CLK_CM33_CORE_DIV] = imx_clk_hw_divider("cm33_core_div", "cm33_sel", base + 0x1c, 21, 6);
++	clks[IMX8ULP_CLK_CM33_BUSCLK] = imx_clk_hw_divider("cm33_busclk", "cm33_core_div", base + 0x10, 7, 6);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	printk("CGC0 init exit\n");
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
++}
++
+ static int imx8ulp_clk_cgc1_init(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -308,6 +406,117 @@ static int imx8ulp_clk_cgc2_init(struct platform_device *pdev)
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+ }
+ 
++static int imx8ulp_clk_pcc0_init(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++	int ret;
++
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, IMX8ULP_CLK_PCC0_END),
++			   GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = IMX8ULP_CLK_PCC0_END;
++	clks = clk_data->hws;
++
++	/* PCC0 */
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
++
++	// Table 31. Synchronous Clocks used by each Platform and Peripherals: Real Time Domain
++	// Do-Nothing
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
++	if (ret)
++		return ret;
++
++	printk("PCC0 init exit\n");
++	/* register the pcc0 reset controller */
++	return imx8ulp_pcc_reset_init(pdev, base, pcc0_resets, ARRAY_SIZE(pcc0_resets));
++}
++
++static int imx8ulp_clk_pcc1_init(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++	int ret;
++
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, IMX8ULP_CLK_PCC1_END),
++			   GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = IMX8ULP_CLK_PCC1_END;
++	clks = clk_data->hws;
++
++	/* PCC1 */
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
++
++	/* Figure 26. RGPIO clocking */
++	clks[IMX8ULP_CLK_RGPIOA] = imx_clk_hw_gate("rgpioa", "cm33_core_div", base + 0xb4, 30);
++	clks[IMX8ULP_CLK_RGPIOB] = imx_clk_hw_gate("rgpiob", "cm33_core_div", base + 0xb8, 30);
++	clks[IMX8ULP_CLK_RGPIOC] = imx_clk_hw_gate("rgpioc", "cm33_core_div", base + 0xbc, 30);
++
++	/* Figure 36. Digital filter clocking */
++	clks[IMX8ULP_CLK_PCTLA] = imx_clk_hw_gate("pctla", "cm33_core_div", base + 0x78, 30);
++	clks[IMX8ULP_CLK_PCTLB] = imx_clk_hw_gate("pctlb", "cm33_core_div", base + 0x7c, 30);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
++	if (ret)
++		return ret;
++
++	printk("PCC1 init exit\n");
++	/* register the pcc1 reset controller */
++	return imx8ulp_pcc_reset_init(pdev, base, pcc1_resets, ARRAY_SIZE(pcc1_resets));
++}
++
++static int imx8ulp_clk_pcc2_init(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++	int ret;
++
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, IMX8ULP_CLK_PCC2_END),
++			   GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = IMX8ULP_CLK_PCC2_END;
++	clks = clk_data->hws;
++
++	/* PCC2 */
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
++
++	// Synchronous Clocks used by each Platform and Peripherals: Real Time Domain
++	// Do-Nothing
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
++	if (ret)
++		return ret;
++
++	printk("PCC2 init exit\n");
++	/* register the pcc2 reset controller */
++	return imx8ulp_pcc_reset_init(pdev, base, pcc2_resets, ARRAY_SIZE(pcc2_resets));
++}
++
+ static int imx8ulp_clk_pcc3_init(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -546,9 +755,13 @@ static int imx8ulp_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id imx8ulp_clk_dt_ids[] = {
++	{ .compatible = "fsl,imx8ulp-pcc0", .data = imx8ulp_clk_pcc0_init },
++	{ .compatible = "fsl,imx8ulp-pcc1", .data = imx8ulp_clk_pcc1_init },
++	{ .compatible = "fsl,imx8ulp-pcc2", .data = imx8ulp_clk_pcc2_init },
+ 	{ .compatible = "fsl,imx8ulp-pcc3", .data = imx8ulp_clk_pcc3_init },
+ 	{ .compatible = "fsl,imx8ulp-pcc4", .data = imx8ulp_clk_pcc4_init },
+ 	{ .compatible = "fsl,imx8ulp-pcc5", .data = imx8ulp_clk_pcc5_init },
++	{ .compatible = "fsl,imx8ulp-cgc0", .data = imx8ulp_clk_cgc0_init },
+ 	{ .compatible = "fsl,imx8ulp-cgc2", .data = imx8ulp_clk_cgc2_init },
+ 	{ .compatible = "fsl,imx8ulp-cgc1", .data = imx8ulp_clk_cgc1_init },
+ 	{ /* sentinel */ },
+diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+index 9b136c951762..cf8a4a9eeb21 100644
+--- a/drivers/clk/imx/clk-pllv4.c
++++ b/drivers/clk/imx/clk-pllv4.c
+@@ -13,6 +13,7 @@
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ 
+ #include "clk.h"
+ 
+@@ -50,6 +51,9 @@ struct clk_pllv4 {
+ /* Valid PLL MULT Table */
+ static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
+ 
++/* Valid PLL0 MULT Table */
++static const int pllv4_mult_table_pll0[] = {30, 25, 22, 20, 16, 15};
++
+ /* Valid PLL MULT range, (max, min) */
+ static const int pllv4_mult_range[] = {54, 27};
+ 
+@@ -86,6 +90,11 @@ static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
+ 	mult &= BM_PLL_MULT;
+ 	mult >>= BP_PLL_MULT;
+ 
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4)) {
++		//printk("%s: name '%s' return rate %ld\n", __func__, clk_hw_get_name(hw), (parent_rate * mult));
++		return (parent_rate * mult);
++	}
++
+ 	mfn = readl_relaxed(pll->base + pll->num_offset);
+ 	mfd = readl_relaxed(pll->base + pll->denom_offset);
+ 	temp64 = parent_rate;
+@@ -106,7 +115,15 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u64 temp64;
+ 	u32 mult;
+ 
+-	if (pll->use_mult_range) {
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4)) {
++		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table_pll0); i++) {
++			round_rate = parent_rate * pllv4_mult_table_pll0[i];
++			if (rate >= round_rate) {
++				found = true;
++				break;
++			}
++		}
++	} else if (pll->use_mult_range) {
+ 		temp64 = (u64)rate;
+ 		do_div(temp64, parent_rate);
+ 		mult = temp64;
+@@ -155,19 +172,25 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return round_rate + (u32)temp64;
+ }
+ 
+-static bool clk_pllv4_is_valid_mult(struct clk_pllv4 *pll, unsigned int mult)
++static bool clk_pllv4_is_valid_mult(struct clk_hw *hw, unsigned int mult)
+ {
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+ 	int i;
+ 
+-	/* check if mult is in valid MULT table */
+-	if (pll->use_mult_range) {
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4)) {
++		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table_pll0); i++) {
++			if (pllv4_mult_table_pll0[i] == mult)
++			return true;
++		}
++	} else if (pll->use_mult_range) {
++		/* check if mult is in valid MULT table */
+ 		if (mult >= pllv4_mult_range[1] &&
+ 		    mult <= pllv4_mult_range[0])
+ 			return true;
+ 	} else {
+ 		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+ 			if (pllv4_mult_table[i] == mult)
+-				return true;
++			return true;
+ 		}
+ 	}
+ 
+@@ -183,7 +206,7 @@ static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	mult = rate / parent_rate;
+ 
+-	if (!clk_pllv4_is_valid_mult(pll, mult))
++	if (!clk_pllv4_is_valid_mult(hw, mult))
+ 		return -EINVAL;
+ 
+ 	if (parent_rate <= MAX_MFD)
+@@ -199,6 +222,9 @@ static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val |= mult << BP_PLL_MULT;
+ 	writel_relaxed(val, pll->base + pll->cfg_offset);
+ 
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4))
++		return 0;
++
+ 	writel_relaxed(mfn, pll->base + pll->num_offset);
+ 	writel_relaxed(mfd, pll->base + pll->denom_offset);
+ 
+@@ -210,6 +236,10 @@ static int clk_pllv4_prepare(struct clk_hw *hw)
+ 	u32 val;
+ 	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+ 
++	/* Don't toggle pll0 in Cortex-A35. It's used in CM33 */
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4))
++		return 0;
++
+ 	val = readl_relaxed(pll->base);
+ 	val |= PLL_EN;
+ 	writel_relaxed(val, pll->base);
+@@ -222,6 +252,10 @@ static void clk_pllv4_unprepare(struct clk_hw *hw)
+ 	u32 val;
+ 	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+ 
++	/* Don't toggle pll0 in Cortex-A35. It's used in CM33 */
++	if (!strncmp("pll0", clk_hw_get_name(hw), 4))
++		return;
++
+ 	val = readl_relaxed(pll->base);
+ 	val &= ~PLL_EN;
+ 	writel_relaxed(val, pll->base);
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8ulp.c b/drivers/pinctrl/freescale/pinctrl-imx8ulp.c
+index 5632c7285147..4167a444ddf2 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8ulp.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8ulp.c
+@@ -212,6 +212,207 @@ static const struct pinctrl_pin_desc imx8ulp_pinctrl_pads[] = {
+ 	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTF31),
+ };
+ 
++/* IOMUXC0 -- RM 8ULP_IO_Definition_and_Package_Ballmap_RM.xlsx */
++enum imx8ulp_pads_iomuxc0 {
++	IMX8ULP_PAD_PTA0 = 0,
++	IMX8ULP_PAD_PTA1,
++	IMX8ULP_PAD_PTA2,
++	IMX8ULP_PAD_PTA3,
++	IMX8ULP_PAD_PTA4,
++	IMX8ULP_PAD_PTA5,
++	IMX8ULP_PAD_PTA6,
++	IMX8ULP_PAD_PTA7,
++	IMX8ULP_PAD_PTA8,
++	IMX8ULP_PAD_PTA9,
++	IMX8ULP_PAD_PTA10,
++	IMX8ULP_PAD_PTA11,
++	IMX8ULP_PAD_PTA12,
++	IMX8ULP_PAD_PTA13,
++	IMX8ULP_PAD_PTA14,
++	IMX8ULP_PAD_PTA15,
++	IMX8ULP_PAD_PTA16,
++	IMX8ULP_PAD_PTA17,
++	IMX8ULP_PAD_PTA18,
++	IMX8ULP_PAD_PTA19,
++	IMX8ULP_PAD_PTA20,
++	IMX8ULP_PAD_PTA21,
++	IMX8ULP_PAD_PTA22,
++	IMX8ULP_PAD_PTA23,
++	IMX8ULP_PAD_PTA24,
++	IMX8ULP_PAD_RESERVE_0,
++	IMX8ULP_PAD_RESERVE_1,
++	IMX8ULP_PAD_RESERVE_2,
++	IMX8ULP_PAD_RESERVE_3,
++	IMX8ULP_PAD_RESERVE_4,
++	IMX8ULP_PAD_RESERVE_5,
++	IMX8ULP_PAD_RESERVE_6,
++	IMX8ULP_PAD_PTB0,
++	IMX8ULP_PAD_PTB1,
++	IMX8ULP_PAD_PTB2,
++	IMX8ULP_PAD_PTB3,
++	IMX8ULP_PAD_PTB4,
++	IMX8ULP_PAD_PTB5,
++	IMX8ULP_PAD_PTB6,
++	IMX8ULP_PAD_PTB7,
++	IMX8ULP_PAD_PTB8,
++	IMX8ULP_PAD_PTB9,
++	IMX8ULP_PAD_PTB10,
++	IMX8ULP_PAD_PTB11,
++	IMX8ULP_PAD_PTB12,
++	IMX8ULP_PAD_PTB13,
++	IMX8ULP_PAD_PTB14,
++	IMX8ULP_PAD_RESERVE_7,
++	IMX8ULP_PAD_RESERVE_8,
++	IMX8ULP_PAD_RESERVE_9,
++	IMX8ULP_PAD_RESERVE_10,
++	IMX8ULP_PAD_RESERVE_11,
++	IMX8ULP_PAD_RESERVE_12,
++	IMX8ULP_PAD_RESERVE_13,
++	IMX8ULP_PAD_RESERVE_14,
++	IMX8ULP_PAD_RESERVE_15,
++	IMX8ULP_PAD_RESERVE_16,
++	IMX8ULP_PAD_RESERVE_17,
++	IMX8ULP_PAD_RESERVE_18,
++	IMX8ULP_PAD_RESERVE_19,
++	IMX8ULP_PAD_RESERVE_20,
++	IMX8ULP_PAD_RESERVE_21,
++	IMX8ULP_PAD_RESERVE_22,
++	IMX8ULP_PAD_RESERVE_23,
++	IMX8ULP_PAD_PTC0,
++	IMX8ULP_PAD_PTC1,
++	IMX8ULP_PAD_PTC2,
++	IMX8ULP_PAD_PTC3,
++	IMX8ULP_PAD_PTC4,
++	IMX8ULP_PAD_PTC5,
++	IMX8ULP_PAD_PTC6,
++	IMX8ULP_PAD_PTC7,
++	IMX8ULP_PAD_PTC8,
++	IMX8ULP_PAD_PTC9,
++	IMX8ULP_PAD_PTC10,
++	IMX8ULP_PAD_PTC11,
++	IMX8ULP_PAD_PTC12,
++	IMX8ULP_PAD_PTC13,
++	IMX8ULP_PAD_PTC14,
++	IMX8ULP_PAD_PTC15,
++	IMX8ULP_PAD_PTC16,
++	IMX8ULP_PAD_PTC17,
++	IMX8ULP_PAD_PTC18,
++	IMX8ULP_PAD_PTC19,
++	IMX8ULP_PAD_PTC20,
++	IMX8ULP_PAD_PTC21,
++	IMX8ULP_PAD_PTC22,
++	IMX8ULP_PAD_PTC23,
++	IMX8ULP_PAD_RESERVE_24,
++	IMX8ULP_PAD_RESERVE_25,
++	IMX8ULP_PAD_RESERVE_26,
++	IMX8ULP_PAD_RESERVE_27,
++	IMX8ULP_PAD_RESERVE_28,
++	IMX8ULP_PAD_RESERVE_29,
++	IMX8ULP_PAD_RESERVE_30,
++	IMX8ULP_PAD_RESERVE_31,
++};
++
++/* Pad names for the pinmux subsystem */
++static const struct pinctrl_pin_desc imx8ulp_pinctrl_pads_iomuxc0[] = {
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA0),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA1),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA2),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA3),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA4),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA5),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA6),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA7),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA8),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA9),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA10),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA11),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA12),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA13),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA14),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA15),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA16),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA17),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA18),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA19),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA20),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA21),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA22),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA23),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTA24),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_0),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_1),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_2),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_3),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_4),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_5),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_6),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB0),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB1),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB2),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB3),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB4),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB5),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB6),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB7),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB8),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB9),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB10),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB11),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB12),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB13),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTB14),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_7),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_8),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_9),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_10),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_11),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_12),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_13),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_14),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_15),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_16),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_17),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_18),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_19),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_20),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_21),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_22),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_23),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC0),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC1),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC2),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC3),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC4),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC5),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC6),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC7),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC8),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC9),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC10),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC11),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC12),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC13),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC14),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC15),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC16),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC17),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC18),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC19),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC20),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC21),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC22),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_PTC23),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_24),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_25),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_26),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_27),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_28),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_29),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_30),
++	IMX_PINCTRL_PIN(IMX8ULP_PAD_RESERVE_31),
++};
++/* end of IOMUXC0 */
++
+ #define BM_OBE_ENABLED		BIT(17)
+ #define BM_IBE_ENABLED		BIT(16)
+ #define BM_MUX_MODE		0xf00
+@@ -248,15 +449,34 @@ static const struct imx_pinctrl_soc_info imx8ulp_pinctrl_info = {
+ 	.mux_shift = BP_MUX_MODE,
+ };
+ 
++static const struct imx_pinctrl_soc_info imx8ulp_pinctrl_info_iomuxc0 = {
++	.pins = imx8ulp_pinctrl_pads_iomuxc0,
++	.npins = ARRAY_SIZE(imx8ulp_pinctrl_pads_iomuxc0),
++	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
++	.gpio_set_direction = imx8ulp_pmx_gpio_set_direction,
++	.mux_mask = BM_MUX_MODE,
++	.mux_shift = BP_MUX_MODE,
++};
++
+ static const struct of_device_id imx8ulp_pinctrl_of_match[] = {
+ 	{ .compatible = "fsl,imx8ulp-iomuxc1", },
++	{ .compatible = "fsl,imx8ulp-iomuxc0", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, imx8ulp_pinctrl_of_match);
+ 
+ static int imx8ulp_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return imx_pinctrl_probe(pdev, &imx8ulp_pinctrl_info);
++	if (!strncmp("298c0000", dev_name(&pdev->dev), 8)) {
++		dev_info(&pdev->dev, "iomuxc1 probe\n");
++		return imx_pinctrl_probe(pdev, &imx8ulp_pinctrl_info);
++	} else if (!strncmp("280a1000", dev_name(&pdev->dev), 8)) {
++		dev_info(&pdev->dev, "iomuxc0 probe\n");
++		return imx_pinctrl_probe(pdev, &imx8ulp_pinctrl_info_iomuxc0);
++	} else {
++		dev_err(&pdev->dev, "Unknown iomuxc device\n");
++		return -ENODEV;
++	}
+ }
+ 
+ static struct platform_driver imx8ulp_pinctrl_driver = {
+diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+index 8d8f005b3cae..d1eb32e7c696 100644
+--- a/include/dt-bindings/clock/imx8ulp-clock.h
++++ b/include/dt-bindings/clock/imx8ulp-clock.h
+@@ -67,6 +67,48 @@
+ 
+ #define IMX8ULP_CLK_CGC1_END			56
+ 
++/* CGC0 */
++#define IMX8ULP_CLK_CM33_SEL                1
++#define IMX8ULP_CLK_PLL0_PRE_SEL            2
++#define IMX8ULP_CLK_PLL0                    3
++#define IMX8ULP_CLK_PLL0_VCODIV             4
++#define IMX8ULP_CLK_PLL0_PFD0               5
++#define IMX8ULP_CLK_PLL0_PFD1               6
++#define IMX8ULP_CLK_PLL0_PFD2               7
++#define IMX8ULP_CLK_PLL0_PFD3               8
++#define IMX8ULP_CLK_PLL1_PRE_SEL            9
++#define IMX8ULP_CLK_PLL1                    10
++#define IMX8ULP_CLK_PLL1_PFD0               11
++#define IMX8ULP_CLK_PLL1_PFD1               12
++#define IMX8ULP_CLK_PLL1_PFD2               13
++#define IMX8ULP_CLK_PLL1_PFD3               14
++#define IMX8ULP_CLK_CGC0_SOSC_DIV1          15
++#define IMX8ULP_CLK_CGC0_SOSC_DIV1_GATE     16
++#define IMX8ULP_CLK_CGC0_SOSC_DIV2          17
++#define IMX8ULP_CLK_CGC0_SOSC_DIV2_GATE     18
++#define IMX8ULP_CLK_CGC0_SOSC_DIV3          19
++#define IMX8ULP_CLK_CGC0_SOSC_DIV3_GATE     20
++#define IMX8ULP_CLK_CGC0_FROSC_DIV1         21
++#define IMX8ULP_CLK_CGC0_FROSC_DIV1_GATE    22
++#define IMX8ULP_CLK_CGC0_FROSC_DIV2         23
++#define IMX8ULP_CLK_CGC0_FROSC_DIV2_GATE    24
++#define IMX8ULP_CLK_CGC0_FROSC_DIV3         25
++#define IMX8ULP_CLK_CGC0_FROSC_DIV3_GATE    26
++#define IMX8ULP_CLK_CGC0_DSP_SEL            27
++#define IMX8ULP_CLK_CGC0_DSP_CORE_DIV       28
++#define IMX8ULP_CLK_CGC0_DSP_BUS            29
++#define IMX8ULP_CLK_PLL1_VCODIV             30
++#define IMX8ULP_CLK_PLL0_PFD1_DIV           31
++#define IMX8ULP_CLK_PLL0_PFD1_DIV_GATE      32
++#define IMX8ULP_CLK_PLL0_PFD2_DIV           33
++#define IMX8ULP_CLK_PLL0_PFD2_DIV_GATE      34
++#define IMX8ULP_CLK_PLL1_PFD1_DIV           35
++#define IMX8ULP_CLK_PLL1_PFD1_DIV_GATE      36
++#define IMX8ULP_CLK_CM33_CORE_DIV           37
++#define IMX8ULP_CLK_CM33_BUSCLK             38
++
++#define IMX8ULP_CLK_CGC0_END			    39
++
+ /* CGC2 */
+ #define IMX8ULP_CLK_PLL4_PRE_SEL	0
+ #define IMX8ULP_CLK_PLL4		1
+@@ -120,6 +162,20 @@
+ 
+ #define IMX8ULP_CLK_CGC2_END		49
+ 
++/* PCC0 */
++#define IMX8ULP_CLK_PCC0_END		0
++
++/* PCC1 */
++#define IMX8ULP_CLK_RGPIOA          0
++#define IMX8ULP_CLK_RGPIOB          1
++#define IMX8ULP_CLK_RGPIOC          2
++#define IMX8ULP_CLK_PCTLA           3
++#define IMX8ULP_CLK_PCTLB           4
++#define IMX8ULP_CLK_PCC1_END		5
++
++/* PCC2 */
++#define IMX8ULP_CLK_PCC2_END		0
++
+ /* PCC3 */
+ #define IMX8ULP_CLK_WDOG3		0
+ #define IMX8ULP_CLK_WDOG4		1
+-- 
+2.34.1
+

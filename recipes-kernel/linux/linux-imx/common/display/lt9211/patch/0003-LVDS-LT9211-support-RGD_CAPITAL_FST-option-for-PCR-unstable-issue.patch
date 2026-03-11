@@ -1,0 +1,95 @@
+From 188b6656f153b98c6db87deb4ce7ccbd471c4b89 Mon Sep 17 00:00:00 2001
+From: SeanChuang2 <dinner0828@gmail.com>
+Date: Fri, 13 Jun 2025 15:59:10 +0800
+Subject: [PATCH 3/3] [ROM-2620][LVDS] driver: Support device-tree
+ RGD_CAPITAL_FST option to solve PCR unstable issue
+Upstream-Status: Inappropriate
+
+---
+ drivers/gpu/drm/bridge/lontium-lt9211.c | 43 +++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9211.c b/drivers/gpu/drm/bridge/lontium-lt9211.c
+index 2b303b540854..9c9da8a07035 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9211.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9211.c
+@@ -51,6 +51,7 @@ struct lt9211 {
+ 	struct regulator		*vccio;
+ 	bool				lvds_dual_link;
+ 	bool				lvds_dual_link_even_odd_swap;
++	int				rgd_capital_fst;
+ };
+ 
+ static const struct regmap_range lt9211_rw_ranges[] = {
+@@ -323,8 +324,8 @@ static int lt9211_configure_plls(struct lt9211 *ctx,
+ 		{ 0xd031, 0x0a },
+ 		{ 0xd025, 0xf0 },
+ 		{ 0xd02a, 0x30 },
+-		{ 0xd021, 0x4f },
+-		{ 0xd022, 0x00 },
++		/*{ 0xd021, 0x4f },*/
++		/*{ 0xd022, 0x00 },*/
+ 		{ 0xd01e, 0x01 },
+ //		{ 0xd023, 0x20 },
+ 		{ 0xd023, 0x80 },
+@@ -384,6 +385,36 @@ static int lt9211_configure_plls(struct lt9211 *ctx,
+ 	/* Wait for the DeSSC PLL to stabilize. */
+ 	msleep(100);
+ 
++	if (ctx->rgd_capital_fst > 0) {
++		/* handle 0xd021 */
++		ret = regmap_read(ctx->regmap, 0xd021, &qval);
++		if (ret)
++			return ret;
++
++		qval &= 0xf0;
++		qval |= ((ctx->rgd_capital_fst >> 8) & 0xf);
++
++		ret = regmap_write(ctx->regmap, 0xd021, qval);
++		if (ret)
++			return ret;
++
++		/* handle 0xd022 */
++		qval = (ctx->rgd_capital_fst & 0xff);
++
++		ret = regmap_write(ctx->regmap, 0xd022, qval);
++		if (ret)
++			return ret;
++	} else {
++		/* handle 0xd021 */
++		ret = regmap_write(ctx->regmap, 0xd021, 0x4f);
++		if (ret)
++			return ret;
++		/* handle 0xd022 */
++		ret = regmap_write(ctx->regmap, 0xd022, 0x00);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = regmap_multi_reg_write(ctx->regmap, lt9211_pcr_seq1,
+ 				     ARRAY_SIZE(lt9211_pcr_seq1));
+ 	if (ret)
+@@ -697,12 +728,20 @@ static int lt9211_parse_dt(struct lt9211 *ctx)
+ 	struct drm_panel *panel;
+ 	int dual_link;
+ 	int ret;
++	int val = -1;
+ 
+ 	ctx->vccio = devm_regulator_get(dev, "vccio");
+ 	if (IS_ERR(ctx->vccio))
+ 		return dev_err_probe(dev, PTR_ERR(ctx->vccio),
+ 				     "Failed to get supply 'vccio'\n");
+ 
++	ctx->rgd_capital_fst = -1;
++	if (!of_property_read_u32(dev->of_node, "rgd_capital_fst", &val))
++	{
++		dev_err(ctx->dev, "Set RGD_CAPITAL_FST: %d\n", val);
++		ctx->rgd_capital_fst = val;
++	}
++
+ 	ctx->lvds_dual_link = false;
+ 	ctx->lvds_dual_link_even_odd_swap = false;
+ 
+-- 
+2.34.1
+

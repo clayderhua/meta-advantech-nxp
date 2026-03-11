@@ -1,0 +1,22 @@
+&{/sound-xcvr/pri-dai-link/cpu} {
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-1;
+};
+
+&ethphy1 {
+	/delete-property/ reset-gpios;
+	/delete-property/ reset-assert-us;
+	/delete-property/ reset-deassert-us;
+	/delete-property/ realtek,clkout-disable;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-1;
+};
+
+&ethphy2 {
+	/delete-property/ reg;
+	/delete-property/ reset-gpios;
+	/delete-property/ reset-assert-us;
+	/delete-property/ reset-deassert-us;
+	/delete-property/ realtek,clkout-disable;
+};
+

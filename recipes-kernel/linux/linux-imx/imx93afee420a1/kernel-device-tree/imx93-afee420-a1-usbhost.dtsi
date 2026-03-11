@@ -1,0 +1,7 @@
+&usbotg1 {
+    dr_mode = "host";
+};
+
+&usbotg2 {
+    dr_mode = "host";
+};

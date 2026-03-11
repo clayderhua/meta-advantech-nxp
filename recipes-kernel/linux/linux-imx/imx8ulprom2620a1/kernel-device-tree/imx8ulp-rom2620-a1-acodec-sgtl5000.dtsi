@@ -1,0 +1,64 @@
+/ {
+	reg_audio_1v8: regulator-audio-1v8 {
+		compatible = "regulator-fixed";
+		regulator-name = "audio-1v8";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		regulator-always-on;
+	};
+
+	sound {
+		compatible = "fsl,sgtl5000",
+				"fsl,imx-audio-sgtl5000";
+		model = "sgtl5000";
+		codec-master;
+		ssi-controller = <&sai7>;
+		audio-codec = <&acodec>;
+		audio-routing =
+			"MIC_IN", "Mic Jack",
+			"Mic Jack", "Mic Bias",
+			"Headphone Jack", "HP_OUT";
+		no-audmux;
+	};
+};
+
+&lpi2c7 {
+	acodec: sgtl5000@a {
+		#sound-dai-cells = <0>;
+		compatible = "fsl,sgtl5000";
+		reg = <0xa>;
+		VDDA-supply = <&reg_audio_1v8>;
+		VDDIO-supply = <&reg_audio_1v8>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_sai7_mclk>;
+		clocks = <&cgc1 IMX8ULP_CLK_SPLL3_PFD1_DIV1>;
+		clock-names = "mclk";
+	};
+};
+
+&sai7 {
+	#sound-dai-cells = <0>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_sai7>;
+	pinctrl-1 = <&pinctrl_sai7>;
+	assigned-clocks = <&cgc2 IMX8ULP_CLK_SAI7_SEL>;
+	assigned-clock-parents = <&cgc1 IMX8ULP_CLK_SPLL3_PFD1_DIV1>;
+	status = "okay";
+};
+
+&iomuxc1 {
+	pinctrl_sai7: sai7grp {
+		fsl,pins = <
+			MX8ULP_PAD_PTD15__I2S7_TX_BCLK	0x43
+			MX8ULP_PAD_PTD16__I2S7_TX_FS	0x43
+			MX8ULP_PAD_PTD17__I2S7_TXD0	0x43
+			MX8ULP_PAD_PTD14__I2S7_RXD0	0x43
+		>;
+	};
+
+	pinctrl_sai7_mclk: sai7grp_mclk {
+		fsl,pins = <
+			MX8ULP_PAD_PTD18__I2S7_MCLK	0x43
+		>;
+	};
+};

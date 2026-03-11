@@ -1,0 +1,13 @@
+/ {
+	gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_led>;
+
+		status {
+			label = "green:status";
+			gpios = <&gpio4 27 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+		};
+	};
+};

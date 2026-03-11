@@ -1,0 +1,46 @@
+&i2c_rpbus_0 {
+
+	/delete-node/ ov5640_mipi@3c;
+
+	ov5640_mipi: ov5640_mipi@3c {
+		compatible = "ovti,ov5640";
+		reg = <0x3c>;
+		clocks = <&cgc2 IMX8ULP_CLK_DSI_PHY_REF>;
+		clock-names = "xclk";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_cam>;
+		powerdown-gpios = <&gpiod 22 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpiod 23 GPIO_ACTIVE_LOW>;
+		status = "okay";
+		port {
+			ov5640_mipi_out: endpoint {
+				remote-endpoint = <&mipi_csi_in>;
+				data-lanes = <1 2>;
+				clocks-lanes = <0>;
+			};
+		};
+	};
+};
+
+&mipi_csi {
+	ports {
+		port@0 {
+			/delete-node/ endpoint;
+
+			mipi_csi_in: endpoint {
+				remote-endpoint = <&ov5640_mipi_out>;
+				data-lanes = <1 2>;
+				clock-lanes = <0>;
+			};
+		};
+	};
+};
+
+&iomuxc1 {
+	pinctrl_cam: camgrp {
+		fsl,pins = <
+			MX8ULP_PAD_PTD22__PTD22		0x3 /* CAM_PWR */
+			MX8ULP_PAD_PTD23__PTD23		0x3 /* CAM_RST */
+		>;
+	};
+};

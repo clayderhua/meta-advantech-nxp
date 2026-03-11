@@ -1,0 +1,3 @@
+&iomuxc1 {
+	/delete-node/ dsigrp;
+};

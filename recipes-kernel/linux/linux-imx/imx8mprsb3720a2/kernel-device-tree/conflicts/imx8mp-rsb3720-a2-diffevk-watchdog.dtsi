@@ -1,0 +1,15 @@
+
+&iomuxc {
+     /delete-node/ pinctrl_pwm;
+     /delete-node/ pinctrl_typec_mux;
+};
+
+&i2c2{
+     /delete-node/ ptn5110;
+};
+
+&pwm4 {
+	/delete-node/ pinctrl-names;
+	/delete-node/ pinctrl-0;
+	/delete-node/ status;
+};

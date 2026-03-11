@@ -1,0 +1,29 @@
+From 5e899cdf0e1930d39fe5114575fcfb3b85be20ca Mon Sep 17 00:00:00 2001
+From: SeanChuang2 <dinner0828@gmail.com>
+Date: Fri, 13 Jun 2025 14:48:45 +0800
+Subject: [PATCH 2/3] [ROM-2620][LVDS] driver: Force lt9211 driver to dual-port
+ output
+Upstream-Status: Inappropriate
+
+---
+ drivers/gpu/drm/bridge/lontium-lt9211.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9211.c b/drivers/gpu/drm/bridge/lontium-lt9211.c
+index 0c1af0487378..2b303b540854 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9211.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9211.c
+@@ -461,7 +461,9 @@ static int lt9211_configure_tx(struct lt9211 *ctx, bool jeida,
+ 			  (de ? BIT(5) : 0) | (bpp24 ? BIT(4) : 0) },
+ 		{ 0x855a, 0xaa },
+ 		{ 0x855b, 0xaa },
+-		{ 0x855c, ctx->lvds_dual_link ? BIT(0) : 0 },
++		/*{ 0x855c, ctx->lvds_dual_link ? BIT(0) : 0 },*/
++		/* Force enable dual-port output */
++		{ 0x855c, 0x01 },
+ 		{ 0x85a1, 0x77 },
+ 		{ 0x8640, 0x40 },
+ 		{ 0x8641, 0x34 },
+-- 
+2.34.1
+

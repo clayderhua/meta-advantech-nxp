@@ -1,0 +1,7 @@
+&iomuxc1 {
+	/delete-node/ usb2grp;
+};
+
+&usbotg2 {
+	/delete-property/ pinctrl-0;
+};

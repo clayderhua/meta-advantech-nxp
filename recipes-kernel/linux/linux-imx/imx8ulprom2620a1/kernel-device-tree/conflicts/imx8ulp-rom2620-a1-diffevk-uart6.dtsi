@@ -1,0 +1,9 @@
+&iomuxc1 {
+	/delete-node/ lpuart6grp;
+};
+
+&lpuart6 {
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+	/delete-node/ bluetooth; 
+};

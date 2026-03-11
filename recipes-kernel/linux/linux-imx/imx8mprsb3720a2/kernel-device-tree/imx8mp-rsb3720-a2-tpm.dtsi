@@ -1,0 +1,19 @@
+&i2c1 {
+        st33htpi: st33htpi@2e {
+            compatible = "st,st33htpm-i2c";
+            reg = <0x2e>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&pinctrl_tpm>;
+            interrupt-parent = <&gpio3>;
+            interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
+        };
+};
+
+&iomuxc {
+        pinctrl_tpm: tpm_grp {
+            fsl,pins = <
+                MX8MP_IOMUXC_SAI5_RXD1__GPIO3_IO22      0x10     /* TPM_PRESENSE_1V8 */
+                MX8MP_IOMUXC_SAI5_RXD2__GPIO3_IO23      0x1c4    /* TPM_IRQ#_1V8 */
+            >;
+        };
+};

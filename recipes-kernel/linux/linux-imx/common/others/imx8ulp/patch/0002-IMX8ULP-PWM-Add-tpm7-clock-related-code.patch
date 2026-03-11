@@ -1,0 +1,59 @@
+From bd23c53a272d753bdba6bf4d128408ebd13a34b8 Mon Sep 17 00:00:00 2001
+From: SeanChuang2 <dinner0828@gmail.com>
+Date: Wed, 18 Jun 2025 13:50:18 +0800
+Subject: [PATCH] [ROM-2620][PWM] driver: Add tpm7 clock related code and
+ definition
+Upstream-Status: Inappropriate
+
+---
+ drivers/clk/imx/clk-imx8ulp.c             | 3 +++
+ include/dt-bindings/clock/imx8ulp-clock.h | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
+index 2e987c5b3c77..154b4cd582bf 100644
+--- a/drivers/clk/imx/clk-imx8ulp.c
++++ b/drivers/clk/imx/clk-imx8ulp.c
+@@ -55,6 +55,7 @@ static const char * const ddr_sels[] = { "frosc", "pll4_pfd1", "sosc", "lvds",
+ static const char * const lpav_sels[] = { "frosc", "pll4_pfd1", "sosc", "lvds", };
+ static const char * const sai45_sels[] = { "spll3_pfd1_div1", "aud_clk1", "aud_clk2", "sosc", };
+ static const char * const sai67_sels[] = { "spll1_pfd2_div", "spll3_pfd1_div1", "aud_clk0", "aud_clk1", "aud_clk2", "sosc", "dummy", "dummy", };
++static const char * const tpm67_sels[] = { "spll3_pfd1_div1", "aud_clk1", "aud_clk2", "sosc_tpm", };
+ static const char * const aud_clk1_sels[] = { "ext_aud_mclk2", "sai4_rx_bclk", "sai4_tx_bclk", "sai5_rx_bclk", "sai5_tx_bclk", "dummy", "dummy", "dummy", };
+ static const char * const aud_clk2_sels[] = { "ext_aud_mclk3", "sai6_rx_bclk", "sai6_tx_bclk", "sai7_rx_bclk", "sai7_tx_bclk", "spdif_rx", "dummy", "dummy", };
+ static const char * const enet_ts_sels[] = { "ext_rmii_clk", "ext_ts_clk", "rosc", "ext_aud_mclk", "sosc", "dummy", "dummy", "dummy"};
+@@ -256,6 +257,7 @@ static int imx8ulp_clk_cgc1_init(struct platform_device *pdev)
+ 	clks = clk_data->hws;
+ 
+ 	clks[IMX8ULP_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
++	clks[IMX8ULP_CLK_SOSC_TPM] =  imx_clk_hw_fixed("sosc_tpm", 24000000);
+ 
+ 	/* CGC1 */
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+@@ -317,6 +319,7 @@ static int imx8ulp_clk_cgc1_init(struct platform_device *pdev)
+ 	clks[IMX8ULP_CLK_AUD_CLK1] = imx_clk_hw_mux2("aud_clk1", base + 0x900, 0, 3, aud_clk1_sels, ARRAY_SIZE(aud_clk1_sels));
+ 	clks[IMX8ULP_CLK_SAI4_SEL] = imx_clk_hw_mux2("sai4_sel", base + 0x904, 0, 2, sai45_sels, ARRAY_SIZE(sai45_sels));
+ 	clks[IMX8ULP_CLK_SAI5_SEL] = imx_clk_hw_mux2("sai5_sel", base + 0x904, 8, 2, sai45_sels, ARRAY_SIZE(sai45_sels));
++	clks[IMX8ULP_CLK_TPM7_SEL] = imx_clk_hw_mux2("tpm7_sel", base + 0x908, 8, 2, tpm67_sels, ARRAY_SIZE(tpm67_sels));
+ 	clks[IMX8ULP_CLK_ENET_TS_SEL] = imx_clk_hw_mux2("enet_ts", base + 0x700, 24, 3, enet_ts_sels, ARRAY_SIZE(enet_ts_sels));
+ 
+ 	imx_check_clk_hws(clks, clk_data->num);
+diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+index 9eab0230fd3c..ae5970967303 100644
+--- a/include/dt-bindings/clock/imx8ulp-clock.h
++++ b/include/dt-bindings/clock/imx8ulp-clock.h
+@@ -64,8 +64,10 @@
+ #define IMX8ULP_CLK_AUD_CLK1			53
+ #define IMX8ULP_CLK_ARM				54
+ #define IMX8ULP_CLK_ENET_TS_SEL			55
++#define IMX8ULP_CLK_TPM7_SEL			56
++#define IMX8ULP_CLK_SOSC_TPM			57
+ 
+-#define IMX8ULP_CLK_CGC1_END			56
++#define IMX8ULP_CLK_CGC1_END			58
+ 
+ /* CGC0 */
+ #define IMX8ULP_CLK_CM33_SEL                1
+-- 
+2.34.1
+

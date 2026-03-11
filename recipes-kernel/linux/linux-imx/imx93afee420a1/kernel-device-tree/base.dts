@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2022 NXP
+ */
+
+#include "imx93-11x11-evk.dts"
+
+/ {
+	model = "Advantech AFEE420 A1 board";
+};
+

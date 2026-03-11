@@ -1,0 +1,8 @@
+
+/ {
+	/delete-node/ gpio-keys;
+};
+
+&iomuxc1 {
+	/delete-node/ gpiokeys;
+};

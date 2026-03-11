@@ -1,0 +1,28 @@
+From 95a0eb7bee3d673340d312f5e34485d210b80187 Mon Sep 17 00:00:00 2001
+From: "Hank.Hsueh" <Hank.Hsueh@advantech.com.tw>
+Date: Thu, 31 Jul 2025 15:37:23 +0800
+Subject: [PATCH] [imx8mp][ROM-5722][drivers] Add delay for S35390A RTC status
+Upstream-Status: Inappropriate
+ read stability - Add 50ms delay before reading S35390A status register
+
+---
+ drivers/rtc/rtc-s35390a.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
+index e3dc18882f41..14e5ba7c1b69 100644
+--- a/drivers/rtc/rtc-s35390a.c
++++ b/drivers/rtc/rtc-s35390a.c
+@@ -147,7 +147,8 @@ static int s35390a_init(struct s35390a *s35390a)
+ static int s35390a_read_status(struct s35390a *s35390a, char *status1)
+ {
+ 	int ret;
+-
++	/* For ROM5722 wait 50ms to ensure S35390A status register is stable for reading */
++	msleep(50);
+ 	ret = s35390a_get_reg(s35390a, S35390A_CMD_STATUS1, status1, 1);
+ 	if (ret < 0)
+ 		return ret;
+-- 
+2.34.1
+

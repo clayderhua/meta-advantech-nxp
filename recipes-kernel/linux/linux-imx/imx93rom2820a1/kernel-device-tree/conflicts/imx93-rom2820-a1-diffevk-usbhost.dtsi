@@ -1,0 +1,8 @@
+&usbotg1 {
+    /delete-property/ dr_mode;
+};
+
+&usbotg2 {
+    /delete-property/ dr_mode;
+};
+

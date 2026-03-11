@@ -1,0 +1,6 @@
+&lpi2c7 {
+    eeprom3: 24c64@57 {
+        compatible = "st,24c64";
+        reg = <0x57>;
+    };
+};

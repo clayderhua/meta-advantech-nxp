@@ -1,0 +1,28 @@
+&i2c1 {
+	/delete-property/ clock-frequency;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+	/delete-property/ status;
+	/delete-node/ pmic@25;
+};
+&i2c2 {
+	/delete-property/ clock-frequency;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+	/delete-property/ status;
+};
+&i2c3 {
+	/delete-property/ clock-frequency;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+	/delete-property/ status;
+};
+&i2c5 {
+	/delete-property/ clock-frequency;
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+	/delete-property/ status;
+};
+&iomuxc {
+    /delete-node/ pinctrl_i2c5;
+};

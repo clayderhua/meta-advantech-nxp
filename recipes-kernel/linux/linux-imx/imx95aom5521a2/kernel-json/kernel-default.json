@@ -1,0 +1,91 @@
+{
+    "imx95-aom5521-a2": {
+        "usb2": {
+            "enabled": "1"
+        },
+        "gpio": {
+            "enabled": "1"
+        },
+        "usbotg": {
+            "enabled": "1"
+        },
+        "uart": {
+            "enabled": "1"
+        },
+        "enet": {
+            "enabled": "1"
+        },
+        "enet_tg": {
+            "enabled": "1"
+        },
+        "spi": {
+            "enabled": "1"
+        },
+        "spi_nor_flash": {
+            "enabled": "1",
+            "dependencies": [
+                "spi"
+            ]
+        },
+        "can": {
+            "enabled": "1"
+        },
+        "i2c": {
+            "enabled": "1"
+        },
+        "i2c_rtc": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "i2c_wdt": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "i2c_codec": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "i2c_eeprom": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "i2c_tpm": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "i2c_gpioexp": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ] 
+        },
+        "hdmi": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c"
+            ]
+        },
+        "pcie0": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c_gpioexp"
+            ]
+        },
+        "pcie1": {
+            "enabled": "1",
+            "dependencies": [
+                "i2c_gpioexp"
+            ]
+        }
+    }
+}

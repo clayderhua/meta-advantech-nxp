@@ -1,0 +1,10 @@
+/ {
+    chosen {
+        stdout-path = &uart3;
+    };
+};
+
+&uart3 {
+    pinctrl-0 = <&pinctrl_uart3>;
+    status = "okay";
+};

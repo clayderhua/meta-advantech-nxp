@@ -1,0 +1,8 @@
+&iomuxc1 {
+	/delete-node/ lpuart5grp;
+};
+
+&lpuart5 {
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+};

@@ -1,0 +1,6 @@
+&lpi2c4 {
+    eeprom2: 24c64@50 {
+        compatible = "st,24c64";
+        reg = <0x50>;
+    };
+};

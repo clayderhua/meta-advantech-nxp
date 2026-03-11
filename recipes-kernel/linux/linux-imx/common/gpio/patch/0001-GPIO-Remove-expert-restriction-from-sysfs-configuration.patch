@@ -1,0 +1,27 @@
+From a71a265532d78398f0de04a4cb80080436f1d95e Mon Sep 17 00:00:00 2001
+From: SeanChuang2 <dinner0828@gmail.com>
+Date: Thu, 19 Jun 2025 09:24:24 +0800
+Subject: [PATCH] [ROM-2620][GPIO] driver: Remove expert restriction from GPIO
+ sysfs interface configuration
+Upstream-Status: Inappropriate
+
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3e339073fbd9..f5491b0e056a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -59,7 +59,7 @@ config DEBUG_GPIO
+ 	  that are most common when setting up new platforms or boards.
+ 
+ config GPIO_SYSFS
+-	bool "/sys/class/gpio/... (sysfs interface)" if EXPERT
++	bool "/sys/class/gpio/... (sysfs interface)"
+ 	depends on SYSFS
+ 	select GPIO_CDEV # We need to encourage the new ABI
+ 	help
+-- 
+2.34.1
+

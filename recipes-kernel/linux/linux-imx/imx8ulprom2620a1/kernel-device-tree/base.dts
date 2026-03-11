@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2022 NXP
+ */
+
+#include "imx8ulp-evk.dts"
+
+/ {
+	model = "Advantech ROM-2620 A1 board";
+
+	reserved-memory {
+		/delete-node/ linux,cma;
+		linux,cma {
+			compatible = "shared-dma-pool";
+			reusable;
+			size = <0 0x14000000>; /* Change CMA from 640MB to 320MB for 1GB DDR */
+			linux,cma-default;
+		};
+	};
+};
+

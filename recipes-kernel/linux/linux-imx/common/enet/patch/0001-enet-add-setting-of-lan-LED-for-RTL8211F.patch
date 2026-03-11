@@ -1,0 +1,54 @@
+From 6fd632457001f464443fdf1d155e182aa53c469d Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Fri, 22 Aug 2025 13:42:00 +0800
+Subject: [PATCH] [enet] add setting of lan LED for RTL8211F
+Upstream-Status: Inappropriate
+
+---
+ drivers/net/phy/realtek.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index b672af7b5809..81412a9bb09f 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -110,6 +110,16 @@ struct rtl821x_priv {
+ 	struct clk *clk;
+ };
+ 
++static void rtl8211f_phy_fixup(struct phy_device *dev)
++{
++	msleep(200);
++	phy_write(dev, 0x1f, 0x0d04);
++	/* PHY LED OK */
++	phy_write(dev, 0x10, 0xa050);
++	phy_write(dev, 0x11, 0x0000);
++	phy_write(dev, 0x1f, 0x0000);
++}
++
+ static int rtl821x_read_page(struct phy_device *phydev)
+ {
+ 	return __phy_read(phydev, RTL821x_PAGE_SELECT);
+@@ -166,6 +176,10 @@ static int rtl821x_probe(struct phy_device *phydev)
+ 
+ 	phydev->priv = priv;
+ 
++	if (phydev && (0x001cc916 == phydev->phy_id)) {
++		rtl8211f_phy_fixup(phydev);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -394,6 +408,8 @@ static int rtl8211f_config_init(struct phy_device *phydev)
+ 		return ret;
+ 	}
+ 
++	rtl8211f_phy_fixup(phydev);
++
+ 	switch (phydev->interface) {
+ 	case PHY_INTERFACE_MODE_RGMII:
+ 		val_txdly = 0;
+-- 
+2.34.1
+

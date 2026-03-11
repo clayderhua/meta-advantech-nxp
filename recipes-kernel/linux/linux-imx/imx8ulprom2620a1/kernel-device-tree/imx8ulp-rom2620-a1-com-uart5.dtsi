@@ -1,0 +1,18 @@
+
+&lpuart5 {
+	/* console */
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_lpuart5>;
+	pinctrl-1 = <&pinctrl_lpuart5>;
+	status = "okay";
+};
+
+&iomuxc1 {
+
+	pinctrl_lpuart5: lpuart5grp {
+		fsl,pins = <
+			MX8ULP_PAD_PTE6__LPUART5_TX	0x3
+			MX8ULP_PAD_PTE7__LPUART5_RX	0x3
+		>;
+	};
+};

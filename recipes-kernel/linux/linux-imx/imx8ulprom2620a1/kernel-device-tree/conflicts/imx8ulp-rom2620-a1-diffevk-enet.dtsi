@@ -1,0 +1,8 @@
+&iomuxc1 {
+	/delete-node/ enetgrp;
+};
+
+&fec {
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+};

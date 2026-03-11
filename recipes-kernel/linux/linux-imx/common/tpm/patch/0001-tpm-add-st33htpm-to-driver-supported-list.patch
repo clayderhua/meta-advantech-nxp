@@ -1,0 +1,25 @@
+From 2d25d961b399b9bae0a21fd82c6679a3650a13a1 Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Mon, 25 Aug 2025 17:03:11 +0800
+Subject: [PATCH 1/1] [tpm] add st33htpm to driver supported list
+Upstream-Status: Inappropriate
+
+---
+ drivers/char/tpm/tpm_tis_i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index 6cd07dd34507..ff66c6dc13a7 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -385,6 +385,7 @@ static const struct of_device_id of_tis_i2c_match[] = {
+ 	{ .compatible = "infineon,slb9673", },
+ 	{ .compatible = "nuvoton,npct75x", },
+ 	{ .compatible = "tcg,tpm-tis-i2c", },
++	{ .compatible = "st,st33htpm-i2c", },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, of_tis_i2c_match);
+-- 
+2.34.1
+

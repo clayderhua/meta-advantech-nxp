@@ -1,0 +1,15 @@
+/ {
+	/delete-node/ regulator-usdhc2;
+};
+
+&iomuxc1 {
+	/delete-node/ usdhc2ptegrp;
+};
+
+&usdhc2 {
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+	/delete-property/ pinctrl-2;
+	/delete-property/ pinctrl-3;
+	/delete-property/ vmmc-supply;
+};

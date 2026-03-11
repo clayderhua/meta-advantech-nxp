@@ -1,0 +1,10 @@
+/ {
+	/delete-node/ bt_sco_codec;
+	/delete-node/ sound-bt-sco;
+};
+
+/delete-node/ &sai5;
+
+&iomuxc1 {
+	/delete-node/ sai5grp;
+};

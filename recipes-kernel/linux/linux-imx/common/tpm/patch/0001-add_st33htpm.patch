@@ -1,0 +1,25 @@
+From 21c4c8277e3092cf19eb111b8414355277ffb7d1 Mon Sep 17 00:00:00 2001
+From: clayderhua <clayderhua@gmail.com>
+Date: Tue, 29 Jul 2025 16:29:14 +0800
+Subject: [PATCH] add_st33htpm
+Upstream-Status: Inappropriate
+
+---
+ drivers/char/tpm/tpm_tis_i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index 6cd07dd34507..89d652cc5158 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -382,6 +382,7 @@ MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_id);
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id of_tis_i2c_match[] = {
++	{ .compatible = "st,st33htpm-i2c", },
+ 	{ .compatible = "infineon,slb9673", },
+ 	{ .compatible = "nuvoton,npct75x", },
+ 	{ .compatible = "tcg,tpm-tis-i2c", },
+-- 
+2.47.0
+

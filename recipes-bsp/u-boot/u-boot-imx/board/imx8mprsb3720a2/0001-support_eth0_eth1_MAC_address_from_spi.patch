@@ -1,0 +1,173 @@
+From d495185673a61a931f77738670b7607d715ead42 Mon Sep 17 00:00:00 2001
+From: clayderhua <clayderhua@gmail.com>
+Date: Fri, 18 Jul 2025 14:18:35 +0800
+Subject: [PATCH] support_eth0_eth1_MAC_address_from_spi
+Upstream-Status: Inappropriate [Board-specific change for RSB3720]
+
+---
+ common/board_r.c | 135 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 135 insertions(+)
+
+diff --git a/common/board_r.c b/common/board_r.c
+index ce7e25d9e61..dfc45b30053 100644
+--- a/common/board_r.c
++++ b/common/board_r.c
+@@ -71,6 +71,21 @@
+ #include <fb_fsl.h>
+ #endif
+ 
++/* Support Read mac address from QSPI */
++#include <version.h>
++#include <spi_flash.h>
++
++#include <version_string.h>
++
++#define CONFIG_SPI_ENV_OFFSET	(768 * 1024)
++#define CONFIG_SPI_ENV_SIZE	(8 * 1024)
++struct boardcfg_t {
++    unsigned char mac[6];
++    unsigned char sn[10];
++    unsigned char Manufacturing_Time[14];
++};
++static struct spi_flash *flash;
++/* Support Read mac address from QSPI (End) */
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+ ulong monitor_flash_len;
+@@ -502,6 +517,123 @@ static int initr_net(void)
+ #endif
+ 	return 0;
+ }
++
++/* Support Read mac address from QSPI */
++#define XMK_STR(x)	#x
++#define MK_STR(x)	XMK_STR(x)
++static int get_eth0_mac(void)
++{
++	int rc = 0;
++	struct boardcfg_t boardcfg;
++	char print_buf[32];
++	uint64_t macaddr = 0;
++	if(spi_flash_read(flash, CONFIG_SPI_ENV_OFFSET + 8*CONFIG_SPI_ENV_SIZE, sizeof(boardcfg), &boardcfg)==0) {
++		/*printf("offset=%d\n", CONFIG_SPI_ENV_OFFSET+ 8*CONFIG_SPI_ENV_SIZE);*/
++		/*printf("0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X\n",
++						boardcfg.mac[0],
++						boardcfg.mac[1],
++						boardcfg.mac[2],
++						boardcfg.mac[3],
++						boardcfg.mac[4],
++						boardcfg.mac[5]);*/
++		macaddr = ((uint64_t)boardcfg.mac[0] << 40)
++			+ ((uint64_t)boardcfg.mac[1] << 32)
++			+ ((uint64_t)boardcfg.mac[2] << 24)
++			+ ((uint64_t)boardcfg.mac[3] << 16)
++			+ ((uint64_t)boardcfg.mac[4] << 8)
++			+ boardcfg.mac[5];
++		/* printf ("MAC addr =%012llX\n", macaddr); */
++		if( (macaddr==0) || (macaddr==0xFFFFFFFFFFFFull) ) {
++			printf("eth0 MAC address is invailed !!\n");
++			sprintf(print_buf,"0x00:0x04:0x9F:0x01:0x30:0xE0");
++			printf("Use default MAC adderss:%s\n",print_buf);
++			env_set("ethaddr",print_buf);
++			return rc;
++		}
++	} else {
++		printf("SPI Read fail!!\n");
++		rc = -1;
++	}
++	if (rc==0) {
++		sprintf(print_buf, "0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X",
++						boardcfg.mac[0],
++						boardcfg.mac[1],
++						boardcfg.mac[2],
++						boardcfg.mac[3],
++						boardcfg.mac[4],
++						boardcfg.mac[5]);
++		printf ("eth0 MAC addr = %s\n", print_buf);
++		if( (env_get("ethaddr") == NULL) ||
++			(strcmp (env_get("ethaddr"),print_buf) != 0) ||
++			(strcmp (env_get("ethaddr"),MK_STR(CONFIG_ETHADDR)) == 0) ) {
++			env_set("ethaddr", print_buf);
++		}
++	}
++	return rc;
++}
++static int get_eth1_mac(void)
++{
++	int rc = 0;
++	struct boardcfg_t boardcfg;
++	char print_buf[32];
++	uint64_t macaddr = 0;
++	if(spi_flash_read(flash, CONFIG_SPI_ENV_OFFSET + 8*CONFIG_SPI_ENV_SIZE + 1024, sizeof(boardcfg), &boardcfg)==0) {
++		/*printf("offset=%d\n", CONFIG_SPI_ENV_OFFSET+ 8*CONFIG_SPI_ENV_SIZE);*/
++		/*printf("0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X\n",
++						boardcfg.mac[0],
++						boardcfg.mac[1],
++						boardcfg.mac[2],
++						boardcfg.mac[3],
++						boardcfg.mac[4],
++						boardcfg.mac[5]);*/
++		macaddr = ((uint64_t)boardcfg.mac[0] << 40)
++			+ ((uint64_t)boardcfg.mac[1] << 32)
++			+ ((uint64_t)boardcfg.mac[2] << 24)
++			+ ((uint64_t)boardcfg.mac[3] << 16)
++			+ ((uint64_t)boardcfg.mac[4] << 8)
++			+ boardcfg.mac[5];
++		/* printf ("MAC addr =%012llX\n", macaddr); */
++		if( (macaddr==0) || (macaddr==0xFFFFFFFFFFFFull) ) {
++			printf("eth1 MAC address is invailed !!\n");
++			sprintf(print_buf,"0x00:0x04:0x9F:0x01:0x30:0xE0");
++			printf("Use default MAC adderss:%s\n",print_buf);
++			env_set("eth1addr",print_buf);
++			return rc;
++		}
++	} else {
++		printf("SPI Read fail!!\n");
++		rc = -1;
++	}
++	if (rc==0) {
++		sprintf(print_buf, "0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X",
++						boardcfg.mac[0],
++						boardcfg.mac[1],
++						boardcfg.mac[2],
++						boardcfg.mac[3],
++						boardcfg.mac[4],
++						boardcfg.mac[5]);
++		printf ("eth1 MAC addr = %s\n", print_buf);
++		if( (env_get("eth1addr") == NULL) ||
++			(strcmp (env_get("eth1addr"),print_buf) != 0) ||
++			(strcmp (env_get("eth1addr"),MK_STR(CONFIG_ETH1ADDR)) == 0) ) {
++			env_set("eth1addr", print_buf);
++		}
++	}
++	return rc;
++}
++
++int boardcfg_get_mac(void)
++{
++	int rc = 0;
++	flash = spi_flash_probe(CONFIG_SF_DEFAULT_BUS, CONFIG_SF_DEFAULT_CS,
++				CONFIG_SF_DEFAULT_SPEED, CONFIG_SF_DEFAULT_MODE);
++	if (!flash)
++		return -1;
++	rc = get_eth0_mac();
++	rc = get_eth1_mac();
++	return rc;
++}
++/* Support Read mac address from QSPI (End) */
+ #endif
+ 
+ #ifdef CONFIG_POST
+@@ -804,6 +936,9 @@ static init_fnc_t init_sequence_r[] = {
+ #if defined(CONFIG_CMD_NET)
+ 	INIT_FUNC_WATCHDOG_RESET
+ 	initr_net,
++/* Support Read mac address from QSPI */
++	boardcfg_get_mac,	/* Get MAC address from SPI */ 
++/* Support Read mac address from QSPI End */
+ #endif
+ #ifdef CONFIG_POST
+ 	initr_post,
+-- 
+2.47.0
+

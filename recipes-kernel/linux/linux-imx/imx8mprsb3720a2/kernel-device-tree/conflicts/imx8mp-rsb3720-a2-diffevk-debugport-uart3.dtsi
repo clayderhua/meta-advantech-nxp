@@ -1,0 +1,6 @@
+/ {
+    chosen {
+        /delete-property/ stdout-path;
+    };
+};
+

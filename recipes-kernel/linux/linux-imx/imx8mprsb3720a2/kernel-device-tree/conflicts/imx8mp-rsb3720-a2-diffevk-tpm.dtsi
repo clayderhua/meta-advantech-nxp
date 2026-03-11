@@ -1,0 +1,3 @@
+&iomuxc {
+     /delete-node/ pinctrl_pdm;
+};

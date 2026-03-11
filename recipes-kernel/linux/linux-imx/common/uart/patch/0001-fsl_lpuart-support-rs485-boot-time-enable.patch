@@ -1,0 +1,36 @@
+From d3d15830d99ab1fa452e497a0625c27be8fcef4e Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Tue, 29 Jul 2025 15:18:42 +0800
+Subject: [PATCH] [fsl_lpuart] support rs485 boot-time enable
+Upstream-Status: Inappropriate
+
+---
+ drivers/tty/serial/fsl_lpuart.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index f36d50fe056f..6b22350ba2fc 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -2381,6 +2381,18 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			sport->lpuart_dma_rx_use = false;
+ 	}
+ 
++	/* set auto RTS mode, when RS-485 is is enabled */
++	if (sport->port.rs485.flags & SER_RS485_ENABLED) {
++		modem |= UARTMODEM_TXRTSE;
++
++		if (sport->port.rs485.flags & SER_RS485_RTS_ON_SEND)
++			modem &= ~UARTMODEM_TXRTSPOL;
++		else if (sport->port.rs485.flags & SER_RS485_RTS_AFTER_SEND)
++			modem |= UARTMODEM_TXRTSPOL;
++
++		lpuart32_write(&sport->port, modem, UARTMODIR);
++	}
++
+ 	uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+-- 
+2.34.1
+

@@ -1,0 +1,40 @@
+/ {
+	lpuart4_mod_reset: lpuart4-mod-reset {
+		compatible = "gpio-reset";
+		reset-gpios = <&gpioc 22 GPIO_ACTIVE_LOW>;
+		reset-delay-us = <2000>;
+		reset-post-delay-ms = <40>;
+		#reset-cells = <0>;
+	};
+};
+
+&lpuart4 {
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_lpuart4>, <&pinctrl_lpuart4_gpio>;
+	pinctrl-1 = <&pinctrl_lpuart4>, <&pinctrl_lpuart4_gpio>;
+	resets = <&lpuart4_mod_reset>;
+	status = "okay";
+
+	bluetooth {
+		compatible = "nxp,88w8987-bt";
+	};
+};
+
+&iomuxc0 {
+	pinctrl_lpuart4_gpio: lpuart4grpgpio {
+		fsl,pins = <
+			MX8ULP_PAD_PTC22__PTC22_GPIOC	0x2 /* W_DISABLE2 */
+		>;
+	};
+};
+
+&iomuxc1 {
+	pinctrl_lpuart4: lpuart4grp {
+		fsl,pins = <
+			MX8ULP_PAD_PTF8__LPUART4_CTS_B	0x3
+			MX8ULP_PAD_PTF9__LPUART4_RTS_B	0x3
+			MX8ULP_PAD_PTF10__LPUART4_TX	0x3
+			MX8ULP_PAD_PTF11__LPUART4_RX	0x3
+		>;
+	};
+};

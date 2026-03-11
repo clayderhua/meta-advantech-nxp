@@ -1,0 +1,19 @@
+
+&lpi2c6 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	clock-frequency = <400000>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_lpi2c6>;
+	pinctrl-1 = <&pinctrl_lpi2c6>;
+	status = "okay";
+};
+
+&iomuxc1 {
+	pinctrl_lpi2c6: lpi2c6grp {
+		fsl,pins = <
+			MX8ULP_PAD_PTE8__LPI2C6_SCL	0x20
+			MX8ULP_PAD_PTE9__LPI2C6_SDA	0x20
+		>;
+	};
+};

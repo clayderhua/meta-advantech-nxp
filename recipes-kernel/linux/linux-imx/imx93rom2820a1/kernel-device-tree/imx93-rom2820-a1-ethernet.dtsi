@@ -1,0 +1,15 @@
+&{/sound-xcvr/pri-dai-link/cpu} {
+		pinctrl-names = "default";
+};
+
+&ethphy1 {
+				compatible = "ethernet-phy-ieee802.3-c22";
+				eee-broken-1000t;
+		pinctrl-names = "default";
+};
+
+&ethphy2 {
+				compatible = "ethernet-phy-ieee802.3-c22";
+				reg = <1>;
+};
+

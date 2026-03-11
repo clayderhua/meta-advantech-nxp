@@ -1,0 +1,9 @@
+&i2c_rpbus_0 {
+	/delete-node/ it6161@6c;
+};
+
+&dsi {
+	ports {
+		/delete-node/ port@1;
+	};
+};

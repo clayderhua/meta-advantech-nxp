@@ -1,0 +1,23 @@
+require ../../common/tpm/i2c-tpm_enable_st33htpm.inc
+
+SRC_URI += " \
+    file://kernel-device-tree/imx95-aom5521-a2-lpi2c2-tpm-st33htpm.dtsi \
+"
+
+i2c_tpm_enable() {
+
+    # [!!] List of DTSI files that implement specific functions.
+    FUNC_DTSI=" \
+        imx95-aom5521-a2-lpi2c2-tpm-st33htpm.dtsi \
+    "
+
+    # Step to add specific function
+    for DTSI in $FUNC_DTSI; do
+        # copy dtsi file
+        install -D "${KERNEL_DTS_ROOT_PATH}/${DTSI}" "${S}/arch/arm64/boot/dts/freescale/${DTSI}"
+        # append target device tree (check it is written or not)
+        if [ ! -f "${KERNEL_FILE_COLLECT_ADD}" ] || ! grep -qF "$DTSI" "${KERNEL_FILE_COLLECT_ADD}"; then
+            echo "#include \"$DTSI\"" >> "${KERNEL_FILE_COLLECT_ADD}"
+        fi
+    done
+}

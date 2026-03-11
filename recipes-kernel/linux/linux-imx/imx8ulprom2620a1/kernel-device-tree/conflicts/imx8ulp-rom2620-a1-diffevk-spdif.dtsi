@@ -1,0 +1,9 @@
+/ {
+	/delete-node/ sound-spdif;
+};
+
+/delete-node/ &spdif;
+
+&iomuxc1 {
+	/delete-node/ spdifgrp;
+};

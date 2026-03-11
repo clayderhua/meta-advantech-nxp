@@ -1,0 +1,16 @@
+&lvds_panel {
+	width-mm = <170>;
+	height-mm = <110>;
+
+	panel-timing {
+		clock-frequency = <33000000>;
+		hactive = <800>;
+		vactive = <480>;
+		hsync-len = <72>;
+		hfront-porch = <24>;
+		hback-porch = <104>;
+		vsync-len = <10>;
+		vfront-porch = <3>;
+		vback-porch = <57>;
+	};
+};

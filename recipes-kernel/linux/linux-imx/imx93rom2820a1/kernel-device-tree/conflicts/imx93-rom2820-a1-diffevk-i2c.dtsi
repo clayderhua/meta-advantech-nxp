@@ -1,0 +1,49 @@
+&lpi2c1 {
+    /delete-property/ #address-cells;
+    /delete-property/ #size-cells;
+    /delete-property/ pinctrl-names;
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+};
+
+&lpi2c2 {
+    /delete-property/ #address-cells;
+    /delete-property/ #size-cells;
+    /delete-property/ pinctrl-names;
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+};
+
+&lpi2c3 {
+    /delete-property/ #address-cells;
+    /delete-property/ #size-cells;
+    /delete-property/ pinctrl-names;
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+};
+
+&lpi2c5 {
+    /delete-property/ #address-cells;
+    /delete-property/ #size-cells;
+    /delete-property/ clock-frequency;
+    /delete-property/ pinctrl-names;
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+    /delete-property/ status;
+};
+
+&lpi2c8 {
+    /delete-property/ #address-cells;
+    /delete-property/ #size-cells;
+    /delete-property/ clock-frequency;
+    /delete-property/ pinctrl-names;
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+    /delete-property/ status;
+};
+
+&iomuxc {
+    /delete-node/ pinctrl_lpi2c5;
+    /delete-node/ pinctrl_lpi2c8;
+};
+

@@ -1,0 +1,6 @@
+
+/delete-node/ &lpspi5;
+
+&iomuxc1 {
+	/delete-node/ lpspi5grp;
+};

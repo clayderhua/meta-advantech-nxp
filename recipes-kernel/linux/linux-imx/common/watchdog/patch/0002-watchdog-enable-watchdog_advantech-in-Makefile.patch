@@ -1,0 +1,25 @@
+From f2f51460ac3ef476e7c7c2539e2b75e915f5cb8c Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Mon, 25 Aug 2025 15:48:31 +0800
+Subject: [PATCH 2/2] [watchdog] enable watchdog_advantech in Makefile
+Upstream-Status: Inappropriate
+
+---
+ drivers/watchdog/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+index ab6f2b41e38e..f042e083fdb7 100644
+--- a/drivers/watchdog/Makefile
++++ b/drivers/watchdog/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_USBPCWATCHDOG) += pcwd_usb.o
+ # ALPHA Architecture
+ 
+ # ARM Architecture
++obj-y += watchdog_advantech.o
+ obj-$(CONFIG_ARM_SP805_WATCHDOG) += sp805_wdt.o
+ obj-$(CONFIG_ARM_SBSA_WATCHDOG) += sbsa_gwdt.o
+ obj-$(CONFIG_ARMADA_37XX_WATCHDOG) += armada_37xx_wdt.o
+-- 
+2.34.1
+

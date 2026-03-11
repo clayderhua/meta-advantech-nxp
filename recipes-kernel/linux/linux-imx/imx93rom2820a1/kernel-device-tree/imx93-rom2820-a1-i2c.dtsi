@@ -1,0 +1,60 @@
+&lpi2c1 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_lpi2c1>;
+    pinctrl-1 = <&pinctrl_lpi2c1>;
+};
+
+&lpi2c2 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_lpi2c2>;
+    pinctrl-1 = <&pinctrl_lpi2c2>;
+};
+
+&lpi2c3 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_lpi2c3>;
+    pinctrl-1 = <&pinctrl_lpi2c3>;
+};
+
+&lpi2c5 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    clock-frequency = <400000>;
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_lpi2c5>;
+    pinctrl-1 = <&pinctrl_lpi2c5>;
+    status = "okay";
+};
+
+&lpi2c8 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    clock-frequency = <400000>;
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_lpi2c8>;
+    pinctrl-1 = <&pinctrl_lpi2c8>;
+    status = "okay";
+};
+
+&iomuxc {
+    pinctrl_lpi2c5: lpi2c5grp {
+        fsl,pins = <
+            MX93_PAD_GPIO_IO22__LPI2C5_SDA 0x40000b9e
+            MX93_PAD_GPIO_IO23__LPI2C5_SCL 0x40000b9e
+        >;
+    };
+
+    pinctrl_lpi2c8: lpi2c8grp {
+        fsl,pins = <
+            MX93_PAD_GPIO_IO12__LPI2C8_SDA 0x40000b9e
+            MX93_PAD_GPIO_IO13__LPI2C8_SCL 0x40000b9e
+        >;
+    };
+};
+

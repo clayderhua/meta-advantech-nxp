@@ -1,0 +1,10 @@
+/delete-node/ &ptn5110;
+/delete-node/ &ptn5110_2;
+
+&usbotg1 {
+    /delete-node/ port;
+};
+
+&usbotg2 {
+    /delete-node/ port;
+};

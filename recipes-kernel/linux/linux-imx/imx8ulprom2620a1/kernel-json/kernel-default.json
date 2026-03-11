@@ -1,0 +1,90 @@
+{
+  "imx8ulp-rom2620-a1": {
+    "uart": {
+      "enabled": "1"
+    },
+    "sdcard": {
+      "enabled": "1"
+    },
+    "usb": {
+      "enabled": "1"
+    },
+    "ethernet": {
+      "enabled": "1"
+    },
+    "acodec": {
+      "enabled": "1"
+    },
+    "gpio": {
+      "enabled": "1"
+    },
+    "pwm": {
+      "enabled": "1"
+    },
+    "m2": {
+      "enabled": "0"
+    },
+    "cam_ov5640": {
+      "enabled": "1"
+    },
+    "i2c": {
+      "enabled": "1"
+    },
+    "i2c_eeprom": {
+      "enabled": "1",
+      "dependencies": [
+        "i2c"
+      ]
+    },
+    "lvds_auog070vw01": {
+      "enabled": "1",
+      "dependencies": [
+        "i2c"
+      ]
+    }
+  },
+  "imx8ulp-rom2620-a1-m2-sdio": {
+    "uart": {
+      "enabled": "1"
+    },
+    "sdcard": {
+      "enabled": "0"
+    },
+    "usb": {
+      "enabled": "1"
+    },
+    "ethernet": {
+      "enabled": "1"
+    },
+    "acodec": {
+      "enabled": "1"
+    },
+    "gpio": {
+      "enabled": "1"
+    },
+    "pwm": {
+      "enabled": "1"
+    },
+    "m2": {
+      "enabled": "1"
+    },
+    "cam_ov5640": {
+      "enabled": "1"
+    },
+    "i2c": {
+      "enabled": "1"
+    },
+    "i2c_eeprom": {
+      "enabled": "1",
+      "dependencies": [
+        "i2c"
+      ]
+    },
+    "lvds_auog070vw01": {
+      "enabled": "1",
+      "dependencies": [
+        "i2c"
+      ]
+    }
+  }
+}

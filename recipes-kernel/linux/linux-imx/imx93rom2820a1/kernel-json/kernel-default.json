@@ -1,0 +1,46 @@
+{
+  "imx93-rom2820-a1": {
+    "uart": {
+      "enabled": "0"
+    },
+    "sdcard": {
+      "enabled": "0"
+    },
+    "usb": {
+      "enabled": "1"
+    },
+    "ethernet": {
+      "enabled": "1"
+    },
+    "acodec": {
+      "enabled": "0"
+    },
+    "gpio": {
+      "enabled": "0"
+    },
+    "pwm": {
+      "enabled": "0"
+    },
+    "m2": {
+      "enabled": "0"
+    },
+    "cam_ov5640": {
+      "enabled": "0"
+    },
+    "i2c": {
+      "enabled": "1"
+    },
+    "i2c_eeprom": {
+      "enabled": "0",
+      "dependencies": [
+        "i2c"
+      ]
+    },
+    "lvds_auog070vw01": {
+      "enabled": "0",
+      "dependencies": [
+        "i2c"
+      ]
+    }
+  }
+}

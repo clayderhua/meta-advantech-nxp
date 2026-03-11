@@ -1,0 +1,65 @@
+From 2005632a816ee22f5ea16ebcf989b61603dda13e Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Fri, 22 Aug 2025 14:50:17 +0800
+Subject: [PATCH] [enet-tg] fix aqr113c lan led
+Upstream-Status: Inappropriate
+
+---
+ drivers/net/phy/aquantia/aquantia_main.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 14dd7eeb5ae7..412de3c47f32 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -110,6 +110,14 @@
+ #define AQR107_OP_IN_PROG_SLEEP		1000
+ #define AQR107_OP_IN_PROG_TIMEOUT	100000
+ 
++static void aqr113c_phy_fixup(struct phy_device *phydev)
++{
++	msleep(200);
++	phy_write_mmd(phydev, MDIO_MMD_VEND1, 0xc430, 0xf);
++	phy_write_mmd(phydev, MDIO_MMD_VEND1, 0xc431, 0x8000);
++	phy_write_mmd(phydev, MDIO_MMD_VEND1, 0xc432, 0x80);
++}
++
+ static int aqr107_get_sset_count(struct phy_device *phydev)
+ {
+ 	return AQR107_SGMII_STAT_SZ;
+@@ -485,7 +493,7 @@ static int aqr107_read_rate(struct phy_device *phydev)
+ 		return 0;
+ 	}
+ 
+-	aqr107_set_led(phydev, phydev->speed);
++	// aqr107_set_led(phydev, phydev->speed);
+ 
+ 	val = phy_read_mmd(phydev, MDIO_MMD_VEND1, config_reg);
+ 	if (val < 0)
+@@ -690,6 +698,11 @@ static int aqr107_config_init(struct phy_device *phydev)
+ 	WARN(phydev->interface == PHY_INTERFACE_MODE_XGMII,
+ 	     "Your devicetree is out of date, please update it. The AQR107 family doesn't support XGMII, maybe you mean USXGMII.\n");
+ 
++	if (phydev->drv != NULL) {
++		if (phydev->drv->phy_id == PHY_ID_AQR113C)
++			aqr113c_phy_fixup(phydev);
++	}
++
+ 	ret = aqr_wait_reset_complete(phydev);
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
+@@ -975,6 +988,11 @@ static int aqr107_probe(struct phy_device *phydev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (phydev->drv != NULL) {
++		if (phydev->drv->phy_id == PHY_ID_AQR113C)
++			aqr113c_phy_fixup(phydev);
++	}
++
+ 	return aqr_hwmon_probe(phydev);
+ }
+ 
+-- 
+2.34.1
+

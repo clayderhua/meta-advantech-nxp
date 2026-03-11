@@ -1,0 +1,20 @@
+&usbotg1 {
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&pinctrl_usb_en>;
+    dr_mode = "host";
+    gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+};
+
+&usbotg2 {
+    dr_mode = "host";
+};
+
+&iomuxc {
+        pinctrl_usb_en: usbengrp {
+                fsl,pins = <
+                       MX93_PAD_PDM_BIT_STREAM1__GPIO1_IO10            0x31e   /* USB1_OTG_EN */
+                >;
+        };
+
+};
+

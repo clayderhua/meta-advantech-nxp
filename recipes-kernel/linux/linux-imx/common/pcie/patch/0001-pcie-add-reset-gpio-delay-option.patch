@@ -1,0 +1,46 @@
+From 5742b1857f9a0d28d065e545a4fddf48e6c61aa0 Mon Sep 17 00:00:00 2001
+From: "tony.shih" <tony13.shih@advantech.com>
+Date: Fri, 29 Aug 2025 16:20:56 +0800
+Subject: [PATCH] [pcie] add reset gpio delay option
+Upstream-Status: Inappropriate
+
+---
+ drivers/pci/controller/dwc/pci-imx6.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 210748c81762..d7d452a66efe 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -152,6 +152,7 @@ struct imx_lut_data {
+ struct imx_pcie {
+ 	struct dw_pcie		*pci;
+ 	struct gpio_desc	*reset_gpiod;
++	u32			reset_gpio_delay; /* ms */
+ 	int			host_wake_irq;
+ 	bool			link_is_up;
+ 	bool			enable_ext_refclk;
+@@ -960,6 +961,9 @@ static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+ 	if (imx_pcie->drvdata->core_reset)
+ 		imx_pcie->drvdata->core_reset(imx_pcie, true);
+ 
++	if (imx_pcie->reset_gpio_delay > 0)
++		msleep(imx_pcie->reset_gpio_delay);
++
+ 	/* Some boards don't have PCIe reset GPIO. */
+ 	gpiod_set_value_cansleep(imx_pcie->reset_gpiod, 1);
+ }
+@@ -1822,6 +1826,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
+ 	pci->max_link_speed = 1;
+ 	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
+ 
++	/* GPIO reset delay */
++	imx_pcie->reset_gpio_delay = 0;
++	of_property_read_u32(node, "adv,reset-gpio-delay", &imx_pcie->reset_gpio_delay);
++
+ 	/*
+ 	 * CLKREQ# signal is an open drain, active low signal that is
+ 	 * driven by the add-in card to requtest reference clock refer
+-- 
+2.34.1
+

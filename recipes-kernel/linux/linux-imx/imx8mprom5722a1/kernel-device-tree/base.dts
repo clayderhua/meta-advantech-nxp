@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2022 NXP
+ */
+
+#include "imx8mp-evk.dts"
+
+/ {
+	model = "Advantech ROM-5722 A1 board";
+};
+
